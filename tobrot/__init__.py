@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# (c) Shrimadhav U K | gautamajay52
+# (c) Shrimadhav U K | gautamajay52 | Amirul Andalib
 
 import asyncio
 import logging
@@ -11,6 +11,9 @@ from logging.handlers import RotatingFileHandler
 from sys import exit
 import urllib.request
 import dotenv
+import telegram.ext as tg
+
+from pyrogram import Client
 
 if os.path.exists("TorrentLeech-Gdrive.txt"):
     with open("Torrentleech-Gdrive.txt", "r+") as f_d:
@@ -50,9 +53,9 @@ for imp in ["TG_BOT_TOKEN", "APP_ID", "API_HASH", "OWNER_ID", "AUTH_CHANNEL"]:
 
 # The Telegram API things
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
-APP_ID = int(os.environ.get("APP_ID", "12345"))
+APP_ID = int(os.environ.get("APP_ID", 12345))
 API_HASH = os.environ.get("API_HASH")
-OWNER_ID = int(os.environ.get("OWNER_ID", "539295917"))
+OWNER_ID = int(os.environ.get("OWNER_ID", 539295917))
 
 # Get these values from my.telegram.org
 # to store the channel ID who are authorized to use the bot
@@ -67,7 +70,7 @@ FREE_USER_MAX_FILE_SIZE = 50000000
 AUTH_CHANNEL.append(539295917)
 AUTH_CHANNEL.append(OWNER_ID)
 # chunk size that should be used with requests
-CHUNK_SIZE = int(os.environ.get("CHUNK_SIZE", "128"))
+CHUNK_SIZE = int(os.environ.get("CHUNK_SIZE", 128))
 # default thumbnail to be used in the videos
 DEF_THUMB_NAIL_VID_S = os.environ.get(
     "DEF_THUMB_NAIL_VID_S", "https://via.placeholder.com/90.jpg"
@@ -78,12 +81,12 @@ MAX_MESSAGE_LENGTH = 4096
 PROCESS_MAX_TIMEOUT = 3600
 #
 SP_LIT_ALGO_RITH_M = os.environ.get("SP_LIT_ALGO_RITH_M", "hjs")
-ARIA_TWO_STARTED_PORT = int(os.environ.get("ARIA_TWO_STARTED_PORT", "6800"))
-EDIT_SLEEP_TIME_OUT = int(os.environ.get("EDIT_SLEEP_TIME_OUT", "15"))
+ARIA_TWO_STARTED_PORT = int(os.environ.get("ARIA_TWO_STARTED_PORT", 6800))
+EDIT_SLEEP_TIME_OUT = int(os.environ.get("EDIT_SLEEP_TIME_OUT", 15))
 MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START = int(
     os.environ.get("MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START", 600)
 )
-MAX_TG_SPLIT_FILE_SIZE = int(os.environ.get("MAX_TG_SPLIT_FILE_SIZE", "1072864000"))
+MAX_TG_SPLIT_FILE_SIZE = int(os.environ.get("MAX_TG_SPLIT_FILE_SIZE", 1072864000))
 # add config vars for the display progress
 FINISHED_PROGRESS_STR = os.environ.get("FINISHED_PROGRESS_STR", "█")
 UN_FINISHED_PROGRESS_STR = os.environ.get("UN_FINISHED_PROGRESS_STR", "░")
@@ -91,25 +94,25 @@ UN_FINISHED_PROGRESS_STR = os.environ.get("UN_FINISHED_PROGRESS_STR", "░")
 TG_OFFENSIVE_API = os.environ.get("TG_OFFENSIVE_API", None)
 CUSTOM_FILE_NAME = os.environ.get("CUSTOM_FILE_NAME", "")
 LEECH_COMMAND = os.environ.get("LEECH_COMMAND", "leech")
-LEECH_UNZIP_COMMAND = os.environ.get("LEECH_UNZIP_COMMAND", "leechunzip")
-LEECH_ZIP_COMMAND = os.environ.get("LEECH_ZIP_COMMAND", "leechzip")
+LEECH_UNZIP_COMMAND = os.environ.get("LEECH_UNZIP_COMMAND", "extract")
+LEECH_ZIP_COMMAND = os.environ.get("LEECH_ZIP_COMMAND", "archive")
 GLEECH_COMMAND = os.environ.get("GLEECH_COMMAND", "gleech")
-GLEECH_UNZIP_COMMAND = os.environ.get("GLEECH_UNZIP_COMMAND", "gleechunzip")
-GLEECH_ZIP_COMMAND = os.environ.get("GLEECH_ZIP_COMMAND", "gleechzip")
+GLEECH_UNZIP_COMMAND = os.environ.get("GLEECH_UNZIP_COMMAND", "gextract")
+GLEECH_ZIP_COMMAND = os.environ.get("GLEECH_ZIP_COMMAND", "garchive")
 YTDL_COMMAND = os.environ.get("YTDL_COMMAND", "ytdl")
 GYTDL_COMMAND = os.environ.get("GYTDL_COMMAND", "gytdl")
 RCLONE_CONFIG = os.environ.get("RCLONE_CONFIG", "")
-DESTINATION_FOLDER = os.environ.get("DESTINATION_FOLDER", "TorrentLeech-Gdrive")
+DESTINATION_FOLDER = os.environ.get("DESTINATION_FOLDER", "TorrentLeechX")
 INDEX_LINK = os.environ.get("INDEX_LINK", "")
 TELEGRAM_LEECH_COMMAND = os.environ.get("TELEGRAM_LEECH_COMMAND", "tleech")
 TELEGRAM_LEECH_UNZIP_COMMAND = os.environ.get(
-    "TELEGRAM_LEECH_UNZIP_COMMAND", "tleechunzip"
+    "TELEGRAM_LEECH_UNZIP_COMMAND", "tleechextract"
 )
 CANCEL_COMMAND_G = os.environ.get("CANCEL_COMMAND_G", "cancel")
 GET_SIZE_G = os.environ.get("GET_SIZE_G", "getsize")
 STATUS_COMMAND = os.environ.get("STATUS_COMMAND", "status")
-SAVE_THUMBNAIL = os.environ.get("SAVE_THUMBNAIL", "savethumbnail")
-CLEAR_THUMBNAIL = os.environ.get("CLEAR_THUMBNAIL", "clearthumbnail")
+SAVE_THUMBNAIL = os.environ.get("SAVE_THUMBNAIL", "savethumb")
+CLEAR_THUMBNAIL = os.environ.get("CLEAR_THUMBNAIL", "clearthumb")
 UPLOAD_AS_DOC = os.environ.get("UPLOAD_AS_DOC", "False")
 PYTDL_COMMAND = os.environ.get("PYTDL_COMMAND", "pytdl")
 GPYTDL_COMMAND = os.environ.get("GPYTDL_COMMAND", "gpytdl")
@@ -122,6 +125,8 @@ TOGGLE_VID = os.environ.get("TOGGLE_VID", "togglevid")
 TOGGLE_DOC = os.environ.get("TOGGLE_DOC", "toggledoc")
 RCLONE_COMMAND = os.environ.get("RCLONE_COMMAND", "rclone")
 HELP_COMMAND = os.environ.get("HELP_COMMAND", "help")
+SPEEDTEST = os.environ.get("SPEEDTEST", "speedtest")
+TSEARCH_COMMAND = os.environ.get("TSEARCH_COMMAND", "tshelp")
 BOT_START_TIME = time.time()
 # dict to control uploading and downloading
 gDict = defaultdict(lambda: [])
@@ -157,4 +162,10 @@ def multi_rclone_init():
 
 multi_rclone_init()
 
-logging.info("😎THE BOT IS BOOTED AND READY TO USE--send /help for more🤖.")
+app = Client("LeechBot", bot_token=TG_BOT_TOKEN, api_id=APP_ID, api_hash=API_HASH, workers=343)
+
+updater = tg.Updater(token=TG_BOT_TOKEN)
+bot = updater.bot
+dispatcher = updater.dispatcher
+
+
